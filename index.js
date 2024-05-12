@@ -5,7 +5,34 @@ const AdmZip = require('adm-zip');
 
 async function generateOrder(createdAtDate, updatedAtDate, orderStatus, stationsAddressStreet, stationAddressCity,
                              stationAddressPostalCode, paymentStatus, totalAmount, totalAmountCurrency, cardNumber,
-                             cardNumberMaskedSign) {
+                             cardNumberMaskedSign, signerKeyPass) {
+    let order = await getOrderInstance(createdAtDate, updatedAtDate, orderStatus, stationsAddressStreet,
+        stationAddressCity, stationAddressPostalCode, paymentStatus, totalAmount, totalAmountCurrency, cardNumber,
+        cardNumberMaskedSign);
+
+    const zipFile = new AdmZip();
+
+    zipFile.addFile("order.json", JSON.stringify(order), "", "");
+
+    const iconFile = await fs.fs.readFileSync('./model.order/icon.png');
+
+    let manifestJson = {
+        "icon.png" : createHash('sha256').update(iconFile).digest('hex'),
+        "order.json" : createHash('sha256').update(JSON.stringify(order)).digest('hex')
+    }
+
+    zipFile.addFile("manifest.json", JSON.stringify(manifestJson), "", "");
+    zipFile.addLocalFile('./model.order/icon.png');
+
+    const signature = await getSignature(signerKeyPass, manifestJson);
+    zipFile.addFile("signature", signature, "", "");
+
+    return zipFile
+}
+
+async function getOrderInstance(createdAtDate, updatedAtDate, orderStatus, stationsAddressStreet, stationAddressCity,
+                                stationAddressPostalCode, paymentStatus, totalAmount, totalAmountCurrency, cardNumber,
+                                cardNumberMaskedSign) {
     let orderUnconverted = await fs.fs.readFileSync('./model.order/order.json');
 
     let order = JSON.parse(orderUnconverted);
@@ -23,24 +50,14 @@ async function generateOrder(createdAtDate, updatedAtDate, orderStatus, stations
     order.payment.total.currency = totalAmountCurrency;
     order.payment.paymentMethods = [`${cardNumberMaskedSign} ${cardNumber}`]
 
-    const zipFile = new AdmZip();
+    return order;
+}
 
-    zipFile.addFile("order.json", JSON.stringify(order), "", "");
-
-    const iconFile = await fs.fs.readFileSync('./model.order/icon.png');
-
-    let manifestJson = {
-        "icon.png" : createHash('sha256').update(iconFile).digest('hex'),
-        "order.json" : createHash('sha256').update(JSON.stringify(order)).digest('hex')
-    }
-
-    zipFile.addFile("manifest.json", JSON.stringify(manifestJson), "", "");
-    zipFile.addLocalFile('./model.order/icon.png');
-
+async function getSignature(signerKeyPass, manifestJson) {
     const signerCert = await fs.fs.readFileSync('./certs/signerCert.pem');
     const signerCertCertificate = forge.pki.certificateFromPem(signerCert);
     const signerKey = await fs.fs.readFileSync('./certs/signerKey.pem');
-    const signerKeyCertificate = forge.pki.decryptRsaPrivateKey(signerKey, "123456789")
+    const signerKeyCertificate = forge.pki.decryptRsaPrivateKey(signerKey, signerKeyPass)
     const wwdr = await fs.fs.readFileSync('./certs/wwdr.pem');
     const wwdrCertificate = forge.pki.certificateFromPem(wwdr);
 
@@ -71,10 +88,7 @@ async function generateOrder(createdAtDate, updatedAtDate, orderStatus, stations
         ]
     });
     await p7.sign({ detached: true });
-    const signature = await Buffer.from(forge.asn1.toDer(p7.toAsn1()).getBytes(), "binary");
-    zipFile.addFile("signature", signature, "", "");
-    // //END SIGNATURE
-    return zipFile
+    return Buffer.from(forge.asn1.toDer(p7.toAsn1()).getBytes(), "binary");
 }
 
 module.exports = generateOrder
