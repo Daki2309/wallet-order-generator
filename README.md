@@ -20,6 +20,12 @@ The library will support you especially in step (4) and (5).
 
 ## Getting Started
 
+### installation
+
+```
+npm i wallet-order-generator
+```
+
 This library is used to easily create a simple Apple Wallet Order object for import into the Apple Wallet. So far the dynamization is limited, this will be extended in the future.
 
 This library distinguishes between static and dynamic components. To use it, two folders must be created in the root of the project - here are instructions on how to use this library:
@@ -129,7 +135,7 @@ project structure for setup:
 
 ![screenshot](./docs/wallet-order-generator.drawio.png)
 
-## Usage
+## Usage 
 
 Currently, 11 parameters have to been given and can be changed dynamically:
 
