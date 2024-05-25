@@ -137,37 +137,35 @@ project structure for setup:
 
 ## Usage 
 
-Currently, 11 parameters have to been given and can be changed dynamically:
+There are three steps with two methods to create an order:
 
-| Attribute name in order.json  | position number as parameter |
-| ------------- | ------------- |
-| createdAt  | 1  |
-| updatedAt  | 2  |
-| status  | 3  |
-| merchant.address.addressLines  | 4  |
-| merchant.address.locality  | 5  |
-| merchant.address.postalCode  | 6  |
-| payment.status  | 7  |
-| payment.total.amount  | 8  |
-| payment.total.currency  | 9  |
-| payment.paymentMethods  | 11 + 10  |
-
-Last parameter is the passphrase for the signer key certificate
-
-## Usage Examples
-
+1) Import wallet-order-generator and call orderGenerator.from(), this method will import the template from model folder from json named "order" (/model.order/order.json).
 ```
 /** CommonJS **/
 const orderGenerator = require('wallet-order-generator');
+...
+
+let orderInstance = await orderGenerator.from();
 ```
+
+2) In the example of orderInstance, now you can change any values dynamically which is included in the template. In the example below, the currency of payment is overridden.
+```
+orderInstance.payment.total.currency = "EUR";
+```
+3) Last step is to put updated json into the method generateOrder together with the passphrase for the signer key certificate
+```
+let readStream = await orderGenerator.generateOrder(orderInstance, "123456789");
+```
+### Usage example completely
 
 ```
 /** Node JS for providing order via webservice **/
 router.get('/order', async function(req, res) {
+    let orderInstance = await orderGenerator.from();
 
-    let readStream = await orderGenerator("2022-06-02T12:30:00Z", "2022-06-02T12:30:00Z", "completed", "example street",
-        "example city", "02041994", "paid", "505", "EUR", "9094",
-        "••••", "123456789");
+    orderInstance.payment.total.currency = "EUR";
+
+    let readStream = await orderGenerator.generateOrder(orderInstance, "123456789");
 
     res.setHeader('Content-type', 'application/vnd.apple.finance.order');
     res.setHeader('Content-Disposition', 'attachment;filename=example.order');
