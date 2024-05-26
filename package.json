@@ -1,8 +1,11 @@
 {
   "name": "wallet-order-generator",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Generate custom Apple Wallet orders in Node.js",
   "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Piksenia/wallet-order-generator.git"
@@ -23,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/Piksenia/wallet-order-generator/issues"
   },
-  "homepage": "https://github.com/Piksenia/wallet-order-generator#readme"
+  "homepage": "https://github.com/Piksenia/wallet-order-generator#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }

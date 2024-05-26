@@ -72,15 +72,16 @@ Create order.json (i.e. shown example) and fill in with the basic information, t
 
 This excerpt is not complete. Further information can be found in the official Apple documentation: https://developer.apple.com/documentation/walletorders/order
 
-Following to this best practice, the package is named model.order. It will result in a folder reading error, if your model folder doesn't have it.
-The icon is required in order to make the order work.
+Following to this best practice, the package is named model.order. It will result in a folder reading error, if your model folder doesn't have it and no different file path is specified.
+In case a different folder name should be used, please add the file path as parameter named modelFolderPath to generate order function (see below in section Usage)
 
 ### certificates
 
-Go to the root of your project and create a folder named “certs”.
+Following to this best practice, go to the root of your project and create a folder named “certs”.
+In case a different folder name should be used, please add the file path as parameter named certFolderPath to generate order function (see below in section Usage)
 
 #### Generate a signing certificate
-To generate successfully an Order, we'll need to obtain three elements:
+To generate successfully an order, we'll need to obtain three elements:
 
 - Signer Certificate (Developer)
 - Signer Certificate Key (Developer)
@@ -155,6 +156,18 @@ orderInstance.payment.total.currency = "EUR";
 3) Last step is to put updated json into the method generateOrder together with the passphrase for the signer key certificate
 ```
 let readStream = await orderGenerator.generateOrder(orderInstance, "123456789");
+```
+Another possibility to specify which png files should be included in the order. If the array is empty, all pngs which are in the model folder will be added to the order
+```
+let readStream = await orderGenerator.generateOrder(orderInstance, "123456789", ["icon.png"]);
+```
+To specify the file path to the model folder, add the 4th parameter type
+```
+let readStream = await orderGenerator.generateOrder(orderInstance, "123456789", undefined, './model.order');
+```
+To specify the file path to the certs folder, add the 5th parameter type
+```
+let readStream = await orderGenerator.generateOrder(orderInstance, "123456789", undefined, undefined, './certs');
 ```
 ### Usage example completely
 
