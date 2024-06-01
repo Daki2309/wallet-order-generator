@@ -10,7 +10,7 @@
     "merchant": {
         "displayName": "Bakery",
         "merchantIdentifier": "com.example.store",
-        "logo": "bakery_logo.png",
+        "logo": "logo.png",
         "url": "https://www.example.com/"
     },
     "payment": {
@@ -33,15 +33,15 @@
             "image": "cheesecake.png",
             "price": { "amount": 1.2, "currency": "USD" },
             "quantity": 5,
-            "subtitle": "May contain nuts",
-            "title": "Cheesecake Slice"
+            "subtitle": "NutWarning",
+            "title": "CheesecakeSlice"
         },
         {
             "image": "spongecake.png",
             "price": { "amount": 1.2, "currency": "USD" },
             "quantity": 10,
-            "subtitle": "May contain nuts",
-            "title": "Sponge Cake Slice"
+            "subtitle": "NutWarning",
+            "title": "SpongeCakeSlice"
         }
     ],
     "fulfillments": [
@@ -62,15 +62,15 @@
                     "image": "cheesecake.png",
                     "price": { "amount": 1.2, "currency": "USD" },
                     "quantity": 5,
-                    "subtitle": "May contain nuts",
-                    "title": "Cheesecake Slice"
+                    "subtitle": "NutWarning",
+                    "title": "CheesecakeSlice"
                 },
                 {
                     "image": "spongecake.png",
                     "price": { "amount": 1.2, "currency": "USD" },
                     "quantity": 10,
-                    "subtitle": "May contain nuts",
-                    "title": "Sponge Cake Slice"
+                    "subtitle": "NutWarning",
+                    "title": "SpongeCakeSlice"
                 }
             ],
             "address": {
